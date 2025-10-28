@@ -1,0 +1,317 @@
+// Narrow Therapeutic Index (NTI) Drug List
+// Source: NAFDAC Guidelines
+
+// List of drugs with narrow therapeutic index
+// BE is mandatory for such products
+export const NTI_DRUG_LIST = [
+  "Abemaciclib",
+  "Acalabrutinib",
+  "Acenocoumarol",
+  "Alatrofloxacin",
+  "Aldesleukin",
+  "Alectinib",
+  "Alemtuzumab",
+  "Alpelisib",
+  "Altretamine",
+  "Amikacin",
+  "Amineptine",
+  "Aminoglutethimide",
+  "Aminophylline",
+  "Amiodarone",
+  "Amitriptyline",
+  "Amitriptylinoxide",
+  "Amoxapine",
+  "Amphotericin B",
+  "Amsacrine",
+  "Anagrelide",
+  "Arbekacin",
+  "Argatroban",
+  "Arsenic trioxide",
+  "Asparaginase Erwinia chrysanthemi",
+  "Asparaginase Escherichia coli",
+  "Astemizole",
+  "Atezolizumab",
+  "Avelumab",
+  "Axitinib",
+  "Azacitidine",
+  "Baricitinib",
+  "Bekanamycin",
+  "Belinostat",
+  "Bendamustine",
+  "Bevacizumab",
+  "Bicalutamide",
+  "Binimetinib",
+  "Bleomycin",
+  "Blinatumomab",
+  "Bortezomib",
+  "Bosutinib",
+  "Brentuximab vedotin",
+  "Brigatinib",
+  "Busulfan",
+  "Butriptyline",
+  "Cabazitaxel",
+  "Cabergoline",
+  "Cabozantinib",
+  "Capecitabine",
+  "Capreomycin",
+  "Carbamazepine",
+  "Carboplatin",
+  "Carfilzomib",
+  "Carmustine",
+  "Cemiplimab",
+  "Ceritinib",
+  "Cetuximab",
+  "Chlorambucil",
+  "Chloramphenicol succinate",
+  "Cisplatin",
+  "Clofarabine",
+  "Clomipramine",
+  "Clonidine",
+  "Cobimetinib",
+  "Colistin",
+  "Conivaptan",
+  "Copanlisib",
+  "Crizotinib",
+  "Cyclophosphamide",
+  "Cyclosporine",
+  "Cytarabine",
+  "Dabrafenib",
+  "Dacarbazine",
+  "Dacomitinib",
+  "Dactinomycin",
+  "Dalfampridine",
+  "Daratumumab",
+  "Dasatinib",
+  "Daunorubicin",
+  "Decitabine",
+  "Denileukin diftitox",
+  "Desipramine",
+  "Dibekacin",
+  "Dibenzepin",
+  "Dicoumarol",
+  "Digitoxin",
+  "Digoxin",
+  "Dihydroergotamine",
+  "Dinutuximab",
+  "Docetaxel",
+  "Dofetilide",
+  "Dosulepin",
+  "Doxorubicin",
+  "Dronedarone",
+  "Durvalumab",
+  "Elotuzumab",
+  "Enasidenib",
+  "Entrectinib",
+  "Epirubicin",
+  "Erdafitinib",
+  "Ergotamine",
+  "Eribulin",
+  "Erlotinib",
+  "Etoposide",
+  "Everolimus",
+  "Flecainide",
+  "Floxuridine",
+  "Fludarabine",
+  "Fluindione",
+  "Fluorouracil",
+  "Fosphenytoin",
+  "Gallium nitrate",
+  "Gemcitabine",
+  "Gemtuzumab ozogamicin",
+  "Gentamicin",
+  "Gentamicin C1a",
+  "Heparin",
+  "Hydroxyurea",
+  "Idarubicin",
+  "Idelalisib",
+  "Ifosfamide",
+  "Imipramine",
+  "Imipramine oxide",
+  "Inotuzumab ozogamicin",
+  "Interferon alfa-2b",
+  "Iobenguane",
+  "Ipilimumab",
+  "Iprindole",
+  "Irinotecan",
+  "Isatuximab",
+  "Isepamicin",
+  "Ivosidenib",
+  "Ixabepilone",
+  "Ixazomib",
+  "Kanamycin",
+  "Levacetylmethadol",
+  "Levothyroxine",
+  "Lithium carbonate",
+  "Lithium citrate",
+  "Lithium hydroxide",
+  "Lomitapide",
+  "Lomustine",
+  "Mechlorethamine",
+  "Melitracen",
+  "Melphalan",
+  "Melphalan flufenamide",
+  "Mercaptopurine",
+  "Methotrexate",
+  "Micronomicin",
+  "Midostaurin",
+  "Mitomycin",
+  "Mitotane",
+  "Mitoxantrone",
+  "Mogamulizumab",
+  "Moxetumomab pasudotox",
+  "Mycophenolic acid",
+  "Necitumumab",
+  "Nedaplatin",
+  "Nelarabine",
+  "Neomycin",
+  "Neratinib",
+  "Netilmicin",
+  "Nilotinib",
+  "Niraparib",
+  "Nortriptyline",
+  "Olaparib",
+  "Omacetaxine mepesuccinate",
+  "Opipramol",
+  "Osimertinib",
+  "Oxaliplatin",
+  "Paclitaxel",
+  "Palbociclib",
+  "Panobinostat",
+  "Pazopanib",
+  "Peginterferon alfa-2a",
+  "Pemetrexed",
+  "Pentostatin",
+  "Pexidartinib",
+  "Phenindione",
+  "Phenobarbital",
+  "Phenprocoumon",
+  "Phenytoin",
+  "Pimozide",
+  "Pixantrone",
+  "Plazomicin",
+  "Pomalidomide",
+  "Ponatinib",
+  "Pralatrexate",
+  "Procainamide",
+  "Procarbazine",
+  "Protriptyline",
+  "Quinidine",
+  "Raltitrexed",
+  "Ramucirumab",
+  "Regorafenib",
+  "Ribociclib",
+  "Ribostamycin",
+  "Rituximab",
+  "Romidepsin",
+  "Rucaparib",
+  "Ruxolitinib",
+  "Siponimod",
+  "Sirolimus",
+  "Sisomicin",
+  "Sodium phosphate P 32",
+  "Sonidegib",
+  "Sorafenib",
+  "Sotalol",
+  "Streptomycin",
+  "Streptozocin",
+  "Sunitinib",
+  "Tacrolimus",
+  "Tagraxofusp",
+  "Talazoparib",
+  "Tamoxifen",
+  "Tegafur",
+  "Teicoplanin",
+  "Temoporfin",
+  "Temozolomide",
+  "Temsirolimus",
+  "Teniposide",
+  "Theophylline",
+  "Thiopental",
+  "Thiotepa",
+  "Tianeptine",
+  "Tioguanine",
+  "Tipiracil",
+  "Tizanidine",
+  "Tobramycin",
+  "Tolvaptan",
+  "Topotecan",
+  "Trabectedin",
+  "Trametinib",
+  "Trastuzumab",
+  "Trastuzumab emtansine",
+  "Trilostane",
+  "Trimetrexate",
+  "Trimipramine",
+  "Uracil mustard",
+  "Valproic acid",
+  "Vancomycin",
+  "Vandetanib",
+  "Vemurafenib",
+  "Venetoclax",
+  "Vinblastine",
+  "Vincristine",
+  "Vindesine",
+  "Vinorelbine",
+  "Visilizumab",
+  "Vorinostat",
+  "Voruciclib",
+  "Warfarin",
+  "Zanubrutinib",
+  "Ziconotide"
+];
+
+// Function to check if a product has narrow therapeutic index
+export const hasNarrowTherapeuticIndex = (productName, activeIngredients = []) => {
+  if (!productName && (!activeIngredients || activeIngredients.length === 0)) {
+    return false;
+  }
+  
+  const searchTerms = [
+    productName?.toLowerCase() || '',
+    ...(Array.isArray(activeIngredients) ? activeIngredients : [activeIngredients])
+      .map(ingredient => ingredient?.toLowerCase() || '')
+  ].filter(term => term.length > 0);
+  
+  return NTI_DRUG_LIST.some(ntiDrug => {
+    const drugName = typeof ntiDrug === 'string' ? ntiDrug : ntiDrug.name;
+    const activeIngredient = typeof ntiDrug === 'object' ? ntiDrug.activeIngredient : null;
+    
+    return searchTerms.some(term => {
+      const normalizedTerm = term.replace(/[^a-z0-9]/g, '');
+      const normalizedDrug = drugName.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const normalizedActive = activeIngredient?.toLowerCase().replace(/[^a-z0-9]/g, '') || '';
+      
+      return normalizedTerm.includes(normalizedDrug) || 
+             normalizedDrug.includes(normalizedTerm) ||
+             (normalizedActive && (normalizedTerm.includes(normalizedActive) || normalizedActive.includes(normalizedTerm)));
+    });
+  });
+};
+
+// Function to get matched NTI drugs for display
+export const getMatchedNTIDrugs = (productName, activeIngredients = []) => {
+  if (!hasNarrowTherapeuticIndex(productName, activeIngredients)) {
+    return [];
+  }
+  
+  const searchTerms = [
+    productName?.toLowerCase() || '',
+    ...(Array.isArray(activeIngredients) ? activeIngredients : [activeIngredients])
+      .map(ingredient => ingredient?.toLowerCase() || '')
+  ].filter(term => term.length > 0);
+  
+  return NTI_DRUG_LIST.filter(ntiDrug => {
+    const drugName = typeof ntiDrug === 'string' ? ntiDrug : ntiDrug.name;
+    const activeIngredient = typeof ntiDrug === 'object' ? ntiDrug.activeIngredient : null;
+    
+    return searchTerms.some(term => {
+      const normalizedTerm = term.replace(/[^a-z0-9]/g, '');
+      const normalizedDrug = drugName.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const normalizedActive = activeIngredient?.toLowerCase().replace(/[^a-z0-9]/g, '') || '';
+      
+      return normalizedTerm.includes(normalizedDrug) || 
+             normalizedDrug.includes(normalizedTerm) ||
+             (normalizedActive && (normalizedTerm.includes(normalizedActive) || normalizedActive.includes(normalizedTerm)));
+    });
+  });
+};

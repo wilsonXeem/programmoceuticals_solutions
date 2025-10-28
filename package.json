@@ -1,0 +1,42 @@
+{
+  "name": "nafdac-dossier-screener-react",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@craco/craco": "^7.1.0",
+    "@cyntler/react-doc-viewer": "^1.17.1",
+    "file-saver": "^2.0.5",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.6.0",
+    "jszip": "^3.10.1",
+    "pdfjs-dist": "^5.4.296",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-pdf": "^7.7.3",
+    "react-router-dom": "^6.8.1",
+    "react-scripts": "5.0.1",
+    "serve": "^14.2.1"
+  },
+  "scripts": {
+    "start": "craco start",
+    "start:clean": "rm -rf build/ .cache/ && npm start -- --reset-cache",
+    "build": "craco build",
+    "build:clean": "rm -rf build/ .cache/ && npm run build",
+    "test": "craco test",
+    "eject": "react-scripts eject",
+    "serve": "serve -s build",
+    "analyze": "npm run build && npx webpack-bundle-analyzer build/static/js/*.js"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

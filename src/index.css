@@ -1,0 +1,159 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  background-color: #f5f5f5;
+}
+
+nav {
+  background: #2196f3;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  margin-right: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+}
+
+nav a:hover, nav a.active {
+  background: rgba(255,255,255,0.2);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.upload-area {
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.upload-area.dragover {
+  border-color: #2196f3;
+  background: #f0f8ff;
+}
+
+.btn {
+  background: #2196f3;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 0.5rem;
+}
+
+.btn:hover {
+  background: #1976d2;
+}
+
+.btn-danger {
+  background: #f44336;
+}
+
+.btn-danger:hover {
+  background: #d32f2f;
+}
+
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+.results-table th,
+.results-table td {
+  border: 1px solid #ddd;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.results-table th {
+  background: #f5f5f5;
+}
+
+.tree-item {
+  padding: 0.25rem 0;
+  cursor: pointer;
+}
+
+.tree-item:hover {
+  background: #f0f0f0;
+}
+
+.tree-item.active {
+  background: #e3f2fd;
+  font-weight: bold;
+}
+
+.tree-folder {
+  font-weight: bold;
+  color: #1976d2;
+}
+
+.tree-file {
+  color: #666;
+  margin-left: 1rem;
+}
+
+.review-container {
+  display: flex;
+  height: calc(100vh - 120px);
+}
+
+.file-nav {
+  width: 300px;
+  border-right: 1px solid #ddd;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.file-viewer {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.file-container {
+  margin-bottom: 2rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.file-header {
+  background: #f5f5f5;
+  padding: 1rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.file-content iframe {
+  width: 100%;
+  height: 600px;
+  border: none;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+}
+
+.status-present {
+  color: #4caf50;
+}
+
+.status-missing {
+  color: #f44336;
+}
