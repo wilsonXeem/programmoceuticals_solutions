@@ -25,11 +25,12 @@ const TabContent = ({ activeFile, isLoading, fileUrl, isPdfFile, isDocxFile, pdf
   return (
     <div style={{ padding: "1rem" }}>
       <div style={{
-        marginBottom: "1rem",
-        padding: "1rem",
-        background: "#f8f9fa",
-        borderRadius: "8px",
-        border: "1px solid #e0e0e0"
+        marginBottom: "1.5rem",
+        padding: "1.25rem",
+        background: "linear-gradient(135deg, #f8f9fa, #e9ecef)",
+        borderRadius: "12px",
+        border: "2px solid #dee2e6",
+        boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
       }}>
         <h3 style={{ margin: "0 0 0.5rem 0", color: "#2c3e50" }}>
           {getFileIcon(activeFile.name)} {activeFile.name}
@@ -68,10 +69,11 @@ const TabContent = ({ activeFile, isLoading, fileUrl, isPdfFile, isDocxFile, pdf
             justifyContent: "space-between",
             alignItems: "center",
             marginBottom: "1rem",
-            padding: "0.75rem",
-            background: "#fff",
-            borderRadius: "4px",
-            border: "1px solid #ddd"
+            padding: "1rem",
+            background: "linear-gradient(135deg, #ffffff, #f8f9fa)",
+            borderRadius: "12px",
+            border: "2px solid #e9ecef",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.05)"
           }}>
             <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
               <span style={{ fontSize: "0.9rem", color: "#666" }}>
@@ -82,20 +84,57 @@ const TabContent = ({ activeFile, isLoading, fileUrl, isPdfFile, isDocxFile, pdf
             <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
               <button
                 onClick={() => setPdfZoom(Math.max(0.5, pdfZoom - 0.25))}
-                style={{ padding: "0.25rem 0.5rem", fontSize: "0.8rem", border: "1px solid #ddd", borderRadius: "3px", background: "#fff" }}
+                style={{ 
+                  padding: "0.5rem 0.75rem", 
+                  fontSize: "0.9rem", 
+                  border: "2px solid #3498db", 
+                  borderRadius: "8px", 
+                  background: "linear-gradient(135deg, #ffffff, #f8f9fa)",
+                  cursor: "pointer",
+                  fontWeight: "600",
+                  color: "#3498db"
+                }}
               >
                 −
               </button>
-              <span style={{ fontSize: "0.8rem", color: "#666", minWidth: "50px", textAlign: "center" }}>{Math.round(pdfZoom * 100)}%</span>
+              <span style={{ 
+                fontSize: "0.9rem", 
+                color: "#2c3e50", 
+                minWidth: "60px", 
+                textAlign: "center",
+                fontWeight: "600",
+                padding: "0.5rem",
+                background: "#e9ecef",
+                borderRadius: "8px"
+              }}>{Math.round(pdfZoom * 100)}%</span>
               <button
                 onClick={() => setPdfZoom(Math.min(3, pdfZoom + 0.25))}
-                style={{ padding: "0.25rem 0.5rem", fontSize: "0.8rem", border: "1px solid #ddd", borderRadius: "3px", background: "#fff" }}
+                style={{ 
+                  padding: "0.5rem 0.75rem", 
+                  fontSize: "0.9rem", 
+                  border: "2px solid #3498db", 
+                  borderRadius: "8px", 
+                  background: "linear-gradient(135deg, #ffffff, #f8f9fa)",
+                  cursor: "pointer",
+                  fontWeight: "600",
+                  color: "#3498db"
+                }}
               >
                 +
               </button>
               <button
                 onClick={() => setPdfZoom(1)}
-                style={{ padding: "0.25rem 0.5rem", fontSize: "0.8rem", border: "1px solid #ddd", borderRadius: "3px", background: "#fff", marginLeft: "0.5rem" }}
+                style={{ 
+                  padding: "0.5rem 0.75rem", 
+                  fontSize: "0.8rem", 
+                  border: "2px solid #28a745", 
+                  borderRadius: "8px", 
+                  background: "linear-gradient(135deg, #28a745, #20c997)",
+                  marginLeft: "0.75rem",
+                  cursor: "pointer",
+                  color: "white",
+                  fontWeight: "600"
+                }}
               >
                 Reset
               </button>
@@ -108,7 +147,17 @@ const TabContent = ({ activeFile, isLoading, fileUrl, isPdfFile, isDocxFile, pdf
                     element.webkitRequestFullscreen();
                   }
                 }}
-                style={{ padding: "0.25rem 0.5rem", fontSize: "0.8rem", border: "1px solid #ddd", borderRadius: "3px", background: "#fff", marginLeft: "0.5rem" }}
+                style={{ 
+                  padding: "0.5rem 0.75rem", 
+                  fontSize: "0.8rem", 
+                  border: "2px solid #6f42c1", 
+                  borderRadius: "8px", 
+                  background: "linear-gradient(135deg, #6f42c1, #5a32a3)",
+                  marginLeft: "0.75rem",
+                  cursor: "pointer",
+                  color: "white",
+                  fontWeight: "600"
+                }}
               >
                 ⛶ Full
               </button>
@@ -593,14 +642,16 @@ const Review = () => {
       >
         <div
           style={{
-            padding: "0.5rem",
-            borderBottom: "1px solid #e0e0e0",
+            padding: "1rem",
+            borderBottom: "2px solid #e9ecef",
+            background: "linear-gradient(135deg, #3498db, #2980b9)",
+            color: "white"
           }}
         >
           <div
             style={{
               display: "flex",
-              justifyContent: "space-between",
+              justifyContent: isNavCollapsed ? "center" : "space-between",
               alignItems: "center",
               marginBottom: isNavCollapsed ? 0 : "1rem",
             }}
@@ -614,17 +665,18 @@ const Review = () => {
               onClick={() => setIsNavCollapsed(!isNavCollapsed)}
               style={{
                 padding: "0.5rem",
-                fontSize: "0.8rem",
-                minWidth: "32px",
-                backgroundColor: "#fff",
-                border: "1px solid #ddd",
-                borderRadius: "4px",
+                fontSize: "0.9rem",
+                minWidth: "36px",
+                backgroundColor: "rgba(255,255,255,0.2)",
+                border: "2px solid rgba(255,255,255,0.3)",
+                borderRadius: "8px",
                 cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                color: "#666",
-                fontWeight: "bold"
+                color: "white",
+                fontWeight: "bold",
+                transition: "all 0.2s ease"
               }}
             >
               {isNavCollapsed ? "→" : "←"}

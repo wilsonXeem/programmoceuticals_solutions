@@ -42,6 +42,95 @@ class DossierService {
     return promise;
   }
 
+  async parseFolder(files, onProgress) {
+    try {
+      if (!files || files.length === 0) {
+        throw new Error('No files provided');
+      }
+      
+      const root = { type: 'folder', name: 'root', children: [] };
+      const fileData = [];
+      
+      onProgress?.(10);
+      
+      for (let i = 0; i < files.length; i++) {
+        try {
+          const file = files[i];
+          if (!file) {
+            console.log(`Skipping null file at index ${i}`);
+            continue;
+          }
+          
+          console.log(`Processing file ${i}:`, {
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            webkitRelativePath: file.webkitRelativePath
+          });
+          
+          const path = file.webkitRelativePath || file.name || `file_${i}`;
+          const pathParts = path.split('/').filter(part => part.length > 0);
+          
+          if (pathParts.length === 0) continue;
+          
+          // Build tree structure
+          let currentNode = root;
+          for (let j = 0; j < pathParts.length - 1; j++) {
+            const folderName = pathParts[j];
+            if (!currentNode.children) currentNode.children = [];
+            
+            let folder = currentNode.children.find(child => child.name === folderName && child.type === 'folder');
+            if (!folder) {
+              folder = { type: 'folder', name: folderName, children: [] };
+              currentNode.children.push(folder);
+            }
+            currentNode = folder;
+          }
+          
+          // Add file to tree
+          const fileName = pathParts[pathParts.length - 1];
+          if (!currentNode.children) currentNode.children = [];
+          
+          const fileSize = (file && typeof file.size === 'number') ? file.size : 0;
+          
+          currentNode.children.push({
+            type: 'file',
+            name: fileName,
+            path: path,
+            size: fileSize
+          });
+          
+          // Store file data
+          fileData.push({
+            path: path,
+            file: file
+          });
+          
+        } catch (fileError) {
+          console.error(`Error processing file ${i}:`, fileError);
+          continue;
+        }
+        
+        const progress = 10 + (i / files.length) * 80;
+        onProgress?.(progress);
+      }
+      
+      const dossier = {
+        name: files[0]?.webkitRelativePath?.split('/')[0] || 'Dossier',
+        root: root,
+        uploadDate: new Date().toISOString()
+      };
+      
+      this.currentDossierId = await indexedDBService.saveDossier(dossier, fileData);
+      onProgress?.(100);
+      return dossier;
+      
+    } catch (error) {
+      console.error('Folder processing error:', error);
+      throw new Error(`Folder processing failed: ${error.message}`);
+    }
+  }
+
   async parseZipFile(file, onProgress) {
     return new Promise((resolve, reject) => {
       // Create worker if not exists

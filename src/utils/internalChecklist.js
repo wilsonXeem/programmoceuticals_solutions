@@ -87,7 +87,7 @@ export const INTERNAL_SCREENING_CHECKLIST = [
     section: "Batch Consistency",
     question: "Are the submission batches in the dossier consistent, and at minimum two batches of pilot scale? (2.3.P.2.2.1, 3.2.P.5.4, and 3.2.P.8.3, R.1.1)",
     guide: "Please confirm batches are consistent across sections 3.2.P.5.4 (Batch Analysis), 3.2.P.8.3 (Stability data), and 3.2.R.1.1 (Executed BMR). The submission batches should be consistent.",
-    moduleRef: "Module 3.2.P.2.2.1 / 3.2.P.5.4 / 3.2.P.8.3 / 3.2.R.1.1",
+    moduleRef: "3.2.P.2 / 3.2.P.5.4 / 3.2.P.8.3 / 3.2.R.1",
   },
   {
     id: 12,

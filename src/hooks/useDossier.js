@@ -21,10 +21,17 @@ export const DossierProvider = ({ children }) => {
     loadCached();
   }, []);
 
-  const uploadDossier = async (file, onProgress) => {
+  const uploadDossier = async (fileOrFiles, onProgress) => {
     setLoading(true);
     try {
-      const dossierData = await dossierService.parseZipFile(file, onProgress);
+      let dossierData;
+      if (Array.isArray(fileOrFiles)) {
+        // Folder upload
+        dossierData = await dossierService.parseFolder(fileOrFiles, onProgress);
+      } else {
+        // ZIP file upload
+        dossierData = await dossierService.parseZipFile(fileOrFiles, onProgress);
+      }
       setDossier(dossierData);
       
       // Start background processing after successful upload

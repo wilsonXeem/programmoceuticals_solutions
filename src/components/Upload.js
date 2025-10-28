@@ -11,7 +11,7 @@ const Upload = () => {
   const [uploadStartTime, setUploadStartTime] = useState(null);
   const { uploadDossier, clearDossier, loading } = useDossier();
   const navigate = useNavigate();
-  const fileInputRef = useRef(null);
+  const folderInputRef = useRef(null);
 
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
@@ -19,17 +19,15 @@ const Upload = () => {
   };
 
   const processSelectedFile = (file) => {
-    if (!file) return;
+    if (!file || !file.name) return;
     
-    // Validate file type
     if (!file.name.toLowerCase().endsWith('.zip')) {
       setStatus('❌ Please select a ZIP file');
       return;
     }
     
-    // Validate file size (max 500MB)
-    if (file.size > 500 * 1024 * 1024) {
-      setStatus('❌ File too large. Maximum size is 500MB');
+    if (file.size > 2 * 1024 * 1024 * 1024) {
+      setStatus('❌ File too large. Maximum size is 2GB');
       return;
     }
     
@@ -99,11 +97,14 @@ const Upload = () => {
   }, [uploadStartTime]);
 
   const handleUpload = async () => {
-    if (!selectedFile) return;
+    if (!selectedFile) {
+      setStatus('❌ Please select a ZIP file first');
+      return;
+    }
 
     const startTime = Date.now();
     setUploadStartTime(startTime);
-    setStatus('🔄 Starting ZIP processing...');
+    setStatus('🔄 Processing ZIP file...');
     setProgress({ type: 'basic', value: 0, startTime });
     
     const result = await uploadDossier(selectedFile, handleProgress);
@@ -113,7 +114,7 @@ const Upload = () => {
       setStatus('✅ Dossier uploaded successfully!');
       setTimeout(() => navigate('/screening'), 1500);
     } else {
-      setStatus(`❌ Error processing dossier: ${result.error || 'Unknown error'}`);
+      setStatus(`❌ Error: ${result.error || 'Upload failed'}`);
       setProgress(null);
       setUploadStartTime(null);
     }
@@ -147,7 +148,7 @@ const Upload = () => {
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          onClick={() => fileInputRef.current?.click()}
+          onClick={() => folderInputRef.current?.click()}
         >
           <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>
             {isDragOver ? '📂' : '📁'}
@@ -158,11 +159,11 @@ const Upload = () => {
           <p style={{ margin: 0, fontSize: '0.9rem', color: '#666' }}>
             {selectedFile ? 
               `Size: ${(selectedFile.size / (1024 * 1024)).toFixed(1)} MB` : 
-              'Maximum file size: 500MB'
+              'Maximum size: 2GB • ZIP files only'
             }
           </p>
           <input
-            ref={fileInputRef}
+            ref={folderInputRef}
             type="file"
             accept=".zip"
             onChange={handleFileSelect}

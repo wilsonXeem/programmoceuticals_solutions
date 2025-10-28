@@ -271,7 +271,7 @@ const Screening = () => {
     setInternalNotes(prev => new Map(prev).set(questionId, note));
   };
 
-  const [productInputs, setProductInputs] = useState({ productName: '', activeIngredient: '' });
+  const [productInputs, setProductInputs] = useState({ productName: '' });
   
   const checkWordDocuments = () => {
     if (!dossier) return;
@@ -313,14 +313,15 @@ const Screening = () => {
 
 
   const checkProductCompliance = () => {
-    if (!productInputs.productName || !productInputs.activeIngredient) {
-      handleInternalNote(2, '⚠️ Please enter both product name and active ingredient.');
+    if (!productInputs.productName) {
+      handleInternalNote(2, '⚠️ Please enter generic name.');
       return;
     }
     
+    const genericName = productInputs.productName.trim();
     const extractedInfo = {
-      productName: productInputs.productName.trim(),
-      activeIngredients: [productInputs.activeIngredient.trim()],
+      productName: genericName,
+      activeIngredients: [genericName],
       strength: '',
       dosageForm: ''
     };
@@ -329,10 +330,10 @@ const Screening = () => {
     
     // Check against all lists
     const results = {
-      ceilingList: checkCeilingList(extractedInfo.productName, extractedInfo.activeIngredients[0]),
-      fivePlusFive: checkFivePlusFivePolicy(extractedInfo.productName, extractedInfo.activeIngredients[0]),
-      importProhibition: checkImportProhibitionList(extractedInfo.productName, extractedInfo.activeIngredients[0]),
-      fdcDirective: checkFDCRegulatoryDirective(extractedInfo.productName, extractedInfo.activeIngredients),
+      ceilingList: checkCeilingList(genericName, genericName),
+      fivePlusFive: checkFivePlusFivePolicy(genericName, genericName),
+      importProhibition: checkImportProhibitionList(genericName, genericName),
+      fdcDirective: checkFDCRegulatoryDirective(genericName, [genericName]),
       ntiCheck: false,
       matchedNTIDrugs: []
     };
@@ -345,30 +346,30 @@ const Screening = () => {
     // Auto-suggest response for question 2
     if (results.ceilingList) {
       handleInternalResponse(2, 'no');
-      handleInternalNote(2, `❌ REJECTED: Product "${extractedInfo.productName}" found on NAFDAC Ceiling List. Cannot be registered.`);
+      handleInternalNote(2, `❌ REJECTED: Generic "${genericName}" found on NAFDAC Ceiling List. Cannot be registered.`);
     } else if (results.importProhibition) {
       handleInternalResponse(2, 'no');
-      handleInternalNote(2, `❌ REJECTED: Product "${extractedInfo.productName}" found on Federal Government Import Prohibition List. Cannot be registered.`);
+      handleInternalNote(2, `❌ REJECTED: Generic "${genericName}" found on Federal Government Import Prohibition List. Cannot be registered.`);
     } else if (results.fivePlusFive) {
       handleInternalResponse(2, 'partial');
-      handleInternalNote(2, `⚠️ CONDITIONAL: Product "${extractedInfo.productName}" is on 5+5 Policy list - can only be registered as locally manufactured.`);
+      handleInternalNote(2, `⚠️ CONDITIONAL: Generic "${genericName}" is on 5+5 Policy list - can only be registered as locally manufactured.`);
     } else {
       handleInternalResponse(2, 'yes');
-      handleInternalNote(2, `✅ APPROVED: Product "${extractedInfo.productName}" not found on any prohibition lists. Good to proceed with registration.`);
+      handleInternalNote(2, `✅ APPROVED: Generic "${genericName}" not found on any prohibition lists. Good to proceed with registration.`);
     }
     
     // Auto-suggest response for question 3 (FDC Regulatory Directive)
     if (results.fdcDirective) {
       handleInternalResponse(3, 'no');
-      handleInternalNote(3, `❌ REJECTED: Product "${extractedInfo.productName}" contains prohibited FDC combination: "${results.fdcDirective.combination}". Registration discontinued per NAFDAC regulatory directive.`);
+      handleInternalNote(3, `❌ REJECTED: Generic "${genericName}" contains prohibited FDC combination: "${results.fdcDirective.combination}". Registration discontinued per NAFDAC regulatory directive.`);
     } else {
       handleInternalResponse(3, 'yes');
-      handleInternalNote(3, `✅ APPROVED: Product "${extractedInfo.productName}" not found on FDC regulatory directive prohibition list. Good to proceed.`);
+      handleInternalNote(3, `✅ APPROVED: Generic "${genericName}" not found on FDC regulatory directive prohibition list. Good to proceed.`);
     }
     
     // Auto-suggest response for question 10 (NTI Check) - NTI list removed
     handleInternalResponse(10, 'no');
-    handleInternalNote(10, `ℹ️ NTI CHECK DISABLED: Narrow Therapeutic Index list has been removed. Please manually verify if BE study is required based on product characteristics.`);
+    handleInternalNote(10, `ℹ️ NTI CHECK DISABLED: Narrow Therapeutic Index list has been removed. Please manually verify if BE study is required based on generic characteristics.`);
   };
 
   const getInternalSummary = () => {
@@ -486,16 +487,26 @@ const Screening = () => {
         return { found: hasFolder ? ['Module 3.2.P.5.1'] : [], required: 1 };
       }
         
-      case 9: { // BE/BW data in Module 5 + BTIF/BAF in Module 1-2
-        const allFiles = flattenFiles(dossier.root);
+      case 9: { // Modules 1, 2, and 5 + BE/BW details
+        const modulePatterns = [
+          { name: 'Module 1', patterns: ['module 1', 'module1'] },
+          { name: 'Module 2', patterns: ['module 2', 'module2'] },
+          { name: 'Module 5', patterns: ['module 5', 'module5'] }
+        ];
         
-        // Check for BE/BW data in Module 5.3 only
+        const found = modulePatterns.filter(modulePattern => 
+          allFolders.some(folder => 
+            modulePattern.patterns.some(pattern => folder.fullPath.toLowerCase().includes(pattern))
+          )
+        ).map(mp => mp.name);
+        
+        // Additional BE/BW specific checks
+        const allFiles = flattenFiles(dossier.root);
         const module5Files = allFiles.filter(file => {
           const path = file.fullPath.toLowerCase();
           return path.includes('module 5') && path.includes('5.3');
         });
         
-        // Check for BTIF Word documents in Module 1.4.1
         const btifBafFiles = allFiles.filter(file => {
           const path = file.fullPath.toLowerCase();
           const name = file.name.toLowerCase();
@@ -504,13 +515,9 @@ const Screening = () => {
           return isWordDoc && inModule141;
         });
         
-        const found = [];
-        if (module5Files.length > 0) found.push('Module 5 BE/BW Data');
-        if (btifBafFiles.length > 0) found.push('BTIF/BAF Word Documents');
-        
         return { 
           found: found, 
-          required: 2,
+          required: 3,
           details: {
             module5Files: module5Files.length,
             btifBafFiles: btifBafFiles.length,
@@ -520,12 +527,12 @@ const Screening = () => {
         };
       }
         
-      case 11: { // Module 3.2.P.2.2.1 / 3.2.P.5.4 / 3.2.P.8.3 / 3.2.R.1.1 (4 required)
+      case 11: { // 3.2.P.2 / 3.2.P.5.4 / 3.2.P.8.3 / 3.2.R.1 (4 required)
         const patterns = [
-          ['3.2.p.2.2.1', '32p221', 'components of the drug product'],
-          ['3.2.p.5.4', '32p54', 'batch analyses'],
-          ['3.2.p.8.3', '32p83', 'stability data'],
-          ['3.2.r.1.1', '32r11', 'executed bmr']
+          ['3.2.p.2', '32p2'],
+          ['3.2.p.5.4', '32p54'],
+          ['3.2.p.8.3', '32p83'],
+          ['3.2.r.1', '32r1']
         ];
         const found = patterns.filter(patternGroup => 
           allFolders.some(folder => 
@@ -535,17 +542,12 @@ const Screening = () => {
         return { found: found.map(p => p[0]), required: 4 };
       }
         
-      case 12: { // Module 3.2.R.1.1 / 3.2.R.1.2 (2 required)
-        const patterns = [
-          ['3.2.r.1.1', '32r11'],
-          ['3.2.r.1.2', '32r12']
-        ];
-        const found = patterns.filter(patternGroup => 
-          allFolders.some(folder => 
-            patternGroup.some(pattern => folder.fullPath.toLowerCase().includes(pattern))
-          )
-        );
-        return { found: found.map(p => p[0]), required: 2 };
+      case 12: { // Module 3.2.R.1 (all subsections)
+        const hasR1 = allFolders.some(folder => {
+          const path = folder.fullPath.toLowerCase();
+          return path.includes('3.2.r.1') || path.includes('32r1');
+        });
+        return { found: hasR1 ? ['3.2.R.1'] : [], required: 1 };
       }
         
       case 13: { // Module 3.2.R.1.2 (1 required)
@@ -712,6 +714,42 @@ const Screening = () => {
       });
     }
     
+    // Special handling for Question 12 & 13 - all files under 3.2.R.1
+    if (moduleRef === 'Module 3.2.R.1.1 / 3.2.R.1.2' || moduleRef === 'Module 3.2.R.1.2') {
+      return allFiles.filter(file => {
+        const filePath = file.fullPath.toLowerCase();
+        const isPdf = file.name.toLowerCase().endsWith('.pdf');
+        const notMacOSX = !filePath.includes('__macosx') && !file.name.startsWith('._');
+        const inModule3_R1 = filePath.includes('module 3') && (filePath.includes('3.2.r.1') || filePath.includes('32r1'));
+        return isPdf && notMacOSX && inModule3_R1;
+      });
+    }
+    
+    // Special handling for Question 14 - 3.2.P.2 and Module 5.3 variants
+    if (moduleRef === 'Module 3.2.P.2 / 5.3.1.2') {
+      return allFiles.filter(file => {
+        const filePath = file.fullPath.toLowerCase();
+        const isPdf = file.name.toLowerCase().endsWith('.pdf');
+        const notMacOSX = !filePath.includes('__macosx') && !file.name.startsWith('._');
+        
+        const inModule3_P2 = filePath.includes('module 3') && filePath.includes('3.2.p.2');
+        const inModule5_53 = filePath.includes('module 5') && (filePath.includes('5.3.1.2') || filePath.includes('5.3.1') || filePath.includes('5.3'));
+        
+        return isPdf && notMacOSX && (inModule3_P2 || inModule5_53);
+      });
+    }
+    
+    // Special handling for Question 15 - 3.2.P.8.3 stability data
+    if (moduleRef === 'Module 3.2.P.8.3') {
+      return allFiles.filter(file => {
+        const filePath = file.fullPath.toLowerCase();
+        const isPdf = file.name.toLowerCase().endsWith('.pdf');
+        const notMacOSX = !filePath.includes('__macosx') && !file.name.startsWith('._');
+        const inModule3_P83 = filePath.includes('module 3') && (filePath.includes('3.2.p.8.3') || filePath.includes('32p83'));
+        return isPdf && notMacOSX && inModule3_P83;
+      });
+    }
+    
     const modulePatterns = moduleRef.toLowerCase().split('/').map(m => m.trim());
     
     return allFiles.filter(file => {
@@ -779,18 +817,24 @@ const Screening = () => {
   };
 
   const openInlinePreview = (questionId, moduleRefs, title) => {
-    const files = findModuleFiles(moduleRefs);
-    const documents = [{
-      moduleRef: moduleRefs,
-      filePath: files.length > 0 ? files[0].path : '',
-      files: files
-    }];
+    // Close any existing preview first
+    setActivePreview(null);
     
-    setActivePreview({
-      questionId,
-      title,
-      documents
-    });
+    // Small delay to ensure cleanup
+    setTimeout(() => {
+      const files = findModuleFiles(moduleRefs);
+      const documents = [{
+        moduleRef: moduleRefs,
+        filePath: files.length > 0 ? files[0].path : '',
+        files: files
+      }];
+      
+      setActivePreview({
+        questionId,
+        title,
+        documents
+      });
+    }, 100);
   };
 
   const previewModuleFiles = (moduleRef) => {
@@ -828,7 +872,17 @@ const Screening = () => {
   return (
     <div className="container" style={{ maxWidth: 'none', width: '100%' }}>
       <div className="card" style={{ width: '100%', maxWidth: 'none' }}>
-        <h2>🔍 Screening</h2>
+        <div style={{
+          textAlign: 'center',
+          marginBottom: '2rem',
+          padding: '1.5rem',
+          background: 'linear-gradient(135deg, #3498db, #2c3e50)',
+          borderRadius: '12px',
+          color: 'white'
+        }}>
+          <h2 style={{ margin: 0, fontSize: '1.8rem', fontWeight: '700' }}>🔍 Dossier Screening</h2>
+          <p style={{ margin: '0.5rem 0 0 0', opacity: 0.9, fontSize: '1rem' }}>NAFDAC Regulatory Compliance Assessment</p>
+        </div>
         
         {false && (
           <div>
@@ -975,6 +1029,65 @@ const Screening = () => {
           <div>
               <p>Screening checklist for NAFDAC reviewers to assess dossier compliance and completeness.</p>
             
+              {/* Product Information Input - Required for Questions 2, 3, and 10 */}
+              <div style={{ 
+                background: '#f8f9fa', 
+                padding: '1.5rem', 
+                borderRadius: '12px', 
+                border: '2px solid #e9ecef',
+                marginBottom: '2rem',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+              }}>
+                <h4 style={{ margin: '0 0 1rem 0', color: '#2c3e50', fontSize: '1.1rem', fontWeight: '600' }}>
+                  📋 Generic Name (Required First)
+                </h4>
+                <p style={{ margin: '0 0 1rem 0', fontSize: '0.9rem', color: '#666' }}>
+                  Enter generic name below. This information will be used for Questions 2, 3, and 10.
+                </p>
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 'bold', marginBottom: '0.25rem' }}>Generic Name:</label>
+                  <input
+                    type="text"
+                    placeholder="e.g., Paracetamol"
+                    value={productInputs.productName}
+                    onChange={(e) => setProductInputs(prev => ({ ...prev, productName: e.target.value }))}
+                    style={{
+                      width: '100%',
+                      padding: '0.5rem',
+                      border: '1px solid #ddd',
+                      borderRadius: '4px',
+                      fontSize: '0.9rem'
+                    }}
+                  />
+                </div>
+                <button
+                  onClick={checkProductCompliance}
+                  disabled={!productInputs.productName}
+                  style={{
+                    padding: '0.5rem 1rem',
+                    fontSize: '0.9rem',
+                    background: !productInputs.productName ? '#f8f9fa' : '#3498db',
+                    color: !productInputs.productName ? '#666' : 'white',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: !productInputs.productName ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  🔍 Check Product Compliance
+                </button>
+                {productCheckResults && (
+                  <div style={{ marginTop: '1rem', padding: '0.75rem', background: 'white', borderRadius: '6px', border: '1px solid #dee2e6' }}>
+                    <div style={{ fontSize: '0.9rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Compliance Check Results:</div>
+                    <div style={{ fontSize: '0.8rem', color: '#666' }}>
+                      <div>Ceiling List: {productCheckResults.ceilingList ? '❌ Found (Prohibited)' : '✅ Clear'}</div>
+                      <div>Import Prohibition: {productCheckResults.importProhibition ? '❌ Found (Prohibited)' : '✅ Clear'}</div>
+                      <div>5+5 Policy: {productCheckResults.fivePlusFive ? '⚠️ Found (Local only)' : '✅ Clear'}</div>
+                      <div>FDC Directive: {productCheckResults.fdcDirective ? '❌ Found (Prohibited)' : '✅ Clear'}</div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <div style={{ marginBottom: '1rem' }}>
                 <button 
                   className="btn" 
@@ -1032,11 +1145,14 @@ const Screening = () => {
                 
                 return (
                   <div key={item.id} style={{
-                    border: '1px solid #e9ecef',
-                    borderRadius: '8px',
+                    border: '2px solid',
+                    borderColor: response === 'yes' ? '#28a745' : response === 'no' ? '#dc3545' : response === 'partial' ? '#ffc107' : '#e9ecef',
+                    borderRadius: '12px',
                     padding: '1.5rem',
-                    marginBottom: '1rem',
-                    background: response === 'yes' ? '#f8fff8' : response === 'no' ? '#fff8f8' : response === 'partial' ? '#fffbf0' : 'white'
+                    marginBottom: '1.5rem',
+                    background: response === 'yes' ? '#f8fff8' : response === 'no' ? '#fff8f8' : response === 'partial' ? '#fffbf0' : 'white',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                    transition: 'all 0.2s ease'
                   }}>
                     {activePreview && activePreview.questionId === item.id ? (
                       <InlineFilePreview
@@ -1048,13 +1164,36 @@ const Screening = () => {
                       <>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
                           <div style={{ flex: 1 }}>
-                            <h4 style={{ margin: '0 0 0.5rem 0', color: '#2c3e50' }}>
-                              {item.id}. {item.question}
+                            <h4 style={{ 
+                              margin: '0 0 0.75rem 0', 
+                              color: '#2c3e50',
+                              fontSize: '1.1rem',
+                              fontWeight: '600',
+                              lineHeight: '1.4'
+                            }}>
+                              <span style={{
+                                background: '#3498db',
+                                color: 'white',
+                                padding: '0.2rem 0.5rem',
+                                borderRadius: '6px',
+                                fontSize: '0.9rem',
+                                marginRight: '0.75rem'
+                              }}>
+                                Q{item.id}
+                              </span>
+                              {item.question}
                             </h4>
-                            <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', color: '#666' }}>
-                              <strong>Section:</strong> {item.section}
-                            </p>
-                            <div style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <div style={{ 
+                              margin: '0 0 0.75rem 0', 
+                              padding: '0.5rem 0.75rem',
+                              background: '#f8f9fa',
+                              borderRadius: '6px',
+                              fontSize: '0.85rem'
+                            }}>
+                              <span style={{ color: '#495057', fontWeight: '600' }}>Section:</span>
+                              <span style={{ color: '#6c757d', marginLeft: '0.5rem' }}>{item.section}</span>
+                            </div>
+                            <div style={{ margin: '0 0 0.75rem 0', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
                               <strong>Module Reference:</strong> 
                               {item.moduleRef !== 'General / Pre-screening' && item.moduleRef !== 'Final Decision' && item.moduleRef !== 'General Checklist' ? (
                                 <button
@@ -1064,14 +1203,16 @@ const Screening = () => {
                                     `Question ${item.id}: ${item.question}`
                                   )}
                                   style={{
-                                    background: '#3498db',
+                                    background: 'linear-gradient(135deg, #3498db, #2980b9)',
                                     color: 'white',
                                     border: 'none',
-                                    padding: '0.3rem 0.8rem',
-                                    borderRadius: '4px',
+                                    padding: '0.4rem 1rem',
+                                    borderRadius: '20px',
                                     cursor: 'pointer',
                                     fontSize: '0.8rem',
-                                    fontWeight: 'bold'
+                                    fontWeight: '600',
+                                    boxShadow: '0 2px 4px rgba(52, 152, 219, 0.3)',
+                                    transition: 'all 0.2s ease'
                                   }}
                                   title={`Preview documents for ${item.moduleRef}`}
                                 >
@@ -1218,56 +1359,37 @@ const Screening = () => {
                                   border: '1px solid #e9ecef',
                                   marginBottom: '1rem'
                                 }}>
-                                  <h5 style={{ margin: '0 0 0.5rem 0', color: '#495057' }}>Product Information</h5>
-                                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-                                    <div>
-                                      <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 'bold', marginBottom: '0.25rem' }}>Product Name:</label>
-                                      <input
-                                        type="text"
-                                        placeholder="e.g., Paracetamol Tablets"
-                                        value={productInputs.productName}
-                                        onChange={(e) => setProductInputs(prev => ({ ...prev, productName: e.target.value }))}
-                                        style={{
-                                          width: '100%',
-                                          padding: '0.5rem',
-                                          border: '1px solid #ddd',
-                                          borderRadius: '4px',
-                                          fontSize: '0.9rem'
-                                        }}
-                                      />
-                                    </div>
-                                    <div>
-                                      <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 'bold', marginBottom: '0.25rem' }}>Active Ingredient:</label>
-                                      <input
-                                        type="text"
-                                        placeholder="e.g., Paracetamol"
-                                        value={productInputs.activeIngredient}
-                                        onChange={(e) => setProductInputs(prev => ({ ...prev, activeIngredient: e.target.value }))}
-                                        style={{
-                                          width: '100%',
-                                          padding: '0.5rem',
-                                          border: '1px solid #ddd',
-                                          borderRadius: '4px',
-                                          fontSize: '0.9rem'
-                                        }}
-                                      />
-                                    </div>
-                                  </div>
-                                  <button
-                                    onClick={checkProductCompliance}
-                                    disabled={!productInputs.productName || !productInputs.activeIngredient}
-                                    style={{
-                                      padding: '0.5rem 1rem',
-                                      fontSize: '0.9rem',
-                                      background: (!productInputs.productName || !productInputs.activeIngredient) ? '#f8f9fa' : '#3498db',
-                                      color: (!productInputs.productName || !productInputs.activeIngredient) ? '#666' : 'white',
-                                      border: 'none',
+                                  <h5 style={{ margin: '0 0 0.5rem 0', color: '#495057' }}>Product Compliance Check</h5>
+                                  <p style={{ fontSize: '0.9rem', color: '#666', margin: '0 0 1rem 0' }}>
+                                    Generic name entered above will be checked against regulatory lists.
+                                  </p>
+                                  {!productInputs.productName ? (
+                                    <div style={{ 
+                                      padding: '0.75rem', 
+                                      background: '#fff3cd', 
+                                      border: '1px solid #ffeaa7', 
                                       borderRadius: '4px',
-                                      cursor: (!productInputs.productName || !productInputs.activeIngredient) ? 'not-allowed' : 'pointer'
-                                    }}
-                                  >
-                                    🔍 Check Against All Lists
-                                  </button>
+                                      fontSize: '0.9rem',
+                                      color: '#856404'
+                                    }}>
+                                      ⚠️ Please enter generic name in the section above first.
+                                    </div>
+                                  ) : (
+                                    <button
+                                      onClick={checkProductCompliance}
+                                      style={{
+                                        padding: '0.5rem 1rem',
+                                        fontSize: '0.9rem',
+                                        background: '#3498db',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '4px',
+                                        cursor: 'pointer'
+                                      }}
+                                    >
+                                      🔍 Re-check Product Compliance
+                                    </button>
+                                  )}
                                 </div>
                                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                                   <button
@@ -1322,23 +1444,35 @@ const Screening = () => {
                                 }}>
                                   <h5 style={{ margin: '0 0 0.5rem 0', color: '#495057' }}>FDC Regulatory Check</h5>
                                   <p style={{ fontSize: '0.9rem', color: '#666', margin: '0 0 1rem 0' }}>
-                                    Use the product information from Question 2 above to check against FDC regulatory directive.
+                                    Generic name from above will be checked against FDC regulatory directive.
                                   </p>
-                                  <button
-                                    onClick={checkProductCompliance}
-                                    disabled={!productInputs.productName || !productInputs.activeIngredient}
-                                    style={{
-                                      padding: '0.5rem 1rem',
-                                      fontSize: '0.9rem',
-                                      background: (!productInputs.productName || !productInputs.activeIngredient) ? '#f8f9fa' : '#e74c3c',
-                                      color: (!productInputs.productName || !productInputs.activeIngredient) ? '#666' : 'white',
-                                      border: 'none',
+                                  {!productInputs.productName ? (
+                                    <div style={{ 
+                                      padding: '0.75rem', 
+                                      background: '#fff3cd', 
+                                      border: '1px solid #ffeaa7', 
                                       borderRadius: '4px',
-                                      cursor: (!productInputs.productName || !productInputs.activeIngredient) ? 'not-allowed' : 'pointer'
-                                    }}
-                                  >
-                                    🔍 Check FDC Regulatory Directive
-                                  </button>
+                                      fontSize: '0.9rem',
+                                      color: '#856404'
+                                    }}>
+                                      ⚠️ Please enter generic name in the section above first.
+                                    </div>
+                                  ) : (
+                                    <button
+                                      onClick={checkProductCompliance}
+                                      style={{
+                                        padding: '0.5rem 1rem',
+                                        fontSize: '0.9rem',
+                                        background: '#e74c3c',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '4px',
+                                        cursor: 'pointer'
+                                      }}
+                                    >
+                                      🔍 Re-check FDC Regulatory Directive
+                                    </button>
+                                  )}
                                 </div>
                                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                                   <button
@@ -1393,23 +1527,35 @@ const Screening = () => {
                                 }}>
                                   <h5 style={{ margin: '0 0 0.5rem 0', color: '#495057' }}>Narrow Therapeutic Index Check</h5>
                                   <p style={{ fontSize: '0.9rem', color: '#666', margin: '0 0 1rem 0' }}>
-                                    Use the product information from Question 2 above to check against NTI drug list.
+                                    Generic name from above will be checked against NTI drug list.
                                   </p>
-                                  <button
-                                    onClick={checkProductCompliance}
-                                    disabled={!productInputs.productName || !productInputs.activeIngredient}
-                                    style={{
-                                      padding: '0.5rem 1rem',
-                                      fontSize: '0.9rem',
-                                      background: (!productInputs.productName || !productInputs.activeIngredient) ? '#f8f9fa' : '#f39c12',
-                                      color: (!productInputs.productName || !productInputs.activeIngredient) ? '#666' : 'white',
-                                      border: 'none',
+                                  {!productInputs.productName ? (
+                                    <div style={{ 
+                                      padding: '0.75rem', 
+                                      background: '#fff3cd', 
+                                      border: '1px solid #ffeaa7', 
                                       borderRadius: '4px',
-                                      cursor: (!productInputs.productName || !productInputs.activeIngredient) ? 'not-allowed' : 'pointer'
-                                    }}
-                                  >
-                                    🔍 Check NTI Drug List
-                                  </button>
+                                      fontSize: '0.9rem',
+                                      color: '#856404'
+                                    }}>
+                                      ⚠️ Please enter generic name in the section above first.
+                                    </div>
+                                  ) : (
+                                    <button
+                                      onClick={checkProductCompliance}
+                                      style={{
+                                        padding: '0.5rem 1rem',
+                                        fontSize: '0.9rem',
+                                        background: '#f39c12',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '4px',
+                                        cursor: 'pointer'
+                                      }}
+                                    >
+                                      🔍 Re-check NTI Drug List
+                                    </button>
+                                  )}
                                 </div>
                                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                                   <button
@@ -1806,10 +1952,12 @@ const Screening = () => {
                 </div>
                 
                 <div style={{ 
-                  background: '#f8f9fa', 
-                  padding: '1.5rem', 
-                  borderRadius: '8px',
-                  border: '1px solid #e9ecef'
+                  background: 'linear-gradient(135deg, #f8f9fa, #e9ecef)', 
+                  padding: '2rem', 
+                  borderRadius: '16px',
+                  border: '2px solid #dee2e6',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                  marginTop: '2rem'
                 }}>
               <h3 style={{ margin: '0 0 1rem 0' }}>Screening Summary</h3>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
@@ -1859,25 +2007,38 @@ const Screening = () => {
                   <strong>Missing Modules:</strong>
                   <div style={{ marginTop: '0.5rem', display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                     {(() => {
-                      const missingModules = [];
-                      INTERNAL_SCREENING_CHECKLIST.forEach(item => {
-                        if (item.moduleRef !== 'General / Pre-screening' && item.moduleRef !== 'Final Decision' && item.id !== 16 && item.id !== 20) {
-                          const result = findModuleFoldersForQuestion(item.id, item.moduleRef);
-                          const moduleRefs = item.moduleRef.split('/').map(m => m.trim());
-                          
-                          moduleRefs.forEach(ref => {
-                            const isFound = result.found.some(found => 
-                              found.toLowerCase().includes(ref.toLowerCase()) || 
-                              ref.toLowerCase().includes(found.toLowerCase())
-                            );
-                            if (!isFound && !missingModules.includes(ref)) {
-                              missingModules.push(ref);
-                            }
-                          });
-                        }
+                      if (results.length === 0) {
+                        return (
+                          <span style={{
+                            padding: '0.2rem 0.5rem',
+                            borderRadius: '12px',
+                            fontSize: '0.7rem',
+                            fontWeight: 'bold',
+                            background: '#e2e3e5',
+                            color: '#6c757d'
+                          }}>
+                            Run general checklist first
+                          </span>
+                        );
+                      }
+                      
+                      const missingFiles = results.filter(r => r.status.includes('❌'));
+                      const missingModules = new Set();
+                      
+                      missingFiles.forEach(file => {
+                        const path = file.path.toLowerCase();
+                        if (path.includes('module 1')) missingModules.add('Module 1');
+                        if (path.includes('module 2')) missingModules.add('Module 2');
+                        if (path.includes('module 3')) missingModules.add('Module 3');
+                        if (path.includes('module 4')) missingModules.add('Module 4');
+                        if (path.includes('module 5')) missingModules.add('Module 5');
+                        if (path.includes('3.2.s')) missingModules.add('3.2.S (Drug Substance)');
+                        if (path.includes('3.2.p')) missingModules.add('3.2.P (Drug Product)');
+                        if (path.includes('3.2.r')) missingModules.add('3.2.R (Regional)');
                       });
-                      return missingModules.length > 0 ? (
-                        missingModules.map((module, index) => (
+                      
+                      return Array.from(missingModules).length > 0 ? (
+                        Array.from(missingModules).map((module, index) => (
                           <span key={index} style={{
                             padding: '0.2rem 0.5rem',
                             borderRadius: '12px',
