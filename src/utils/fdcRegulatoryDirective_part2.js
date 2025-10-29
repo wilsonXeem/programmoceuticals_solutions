@@ -237,5 +237,20 @@ export const FDC_REMAINING_ENTRIES = [
   { id: 335, combination: "Zinc Carnosine + Magnesium Hydroxide + Dried Aluminium Hydroxide + Simethicone" },
   { id: 336, combination: "Zinc Carnosine + Oxetacaine" },
   { id: 337, combination: "Zinc Carnosine + Sucralfate" },
-  { id: 338, combination: "Artesunate + Arteether + Artemether" }
+  { id: 338, combination: "Artesunate + Arteether + Artemether" },
+  { id: 339, combination: "Cyproheptadine (2mg & 4mg) in Combination with Multivitamin" },
+  { id: 340, combination: "Halofantrine" },
+  { id: 341, combination: "Multi-Dose Anti-Malaria Oral Suspensions" },
+  { id: 342, combination: "Ketoconazole Tablet" },
+  { id: 343, combination: "Diclofenac Sodium 50mg + Paracetamol 325mg + Chlorzoxazone 250mg" },
+  { id: 344, combination: "Diclofenac Potassium 100mg" },
+  { id: 345, combination: "Chloroquine Injection" },
+  { id: 346, combination: "Analgin (Metamizole) / Novalgin (Dipyrone)" },
+  { id: 347, combination: "Aceclofenac Sodium 100mg + Paracetamol 500mg + Chlorzoxazone 250mg" },
+  { id: 348, combination: "Dichlorvos (DDVP) ≤100ml pack sizes" },
+  { id: 349, combination: "Antibiotics as Growth Promoters in Livestock" },
+  { id: 350, combination: "Banned Veterinary Pharmaceuticals in Food-Producing Animals" },
+  { id: 351, combination: "Colistin as Coccidiostat" },
+  { id: 352, combination: "Ethoxyquin in Feed for Food-Producing Animals" },
+  { id: 353, combination: "Paraquat" }
 ];

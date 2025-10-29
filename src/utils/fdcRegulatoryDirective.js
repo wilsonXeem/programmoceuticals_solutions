@@ -118,13 +118,20 @@ export const checkFDCRegulatoryDirective = (productName, activeIngredients = [])
         !['tablets', 'capsules', 'injection', 'syrup', 'suspension', 'cream', 'ointment', 'drops', 'solution'].includes(word)
       );
       
-      if (activeIngredientWords.length < 2) return false;
+      // Check for single word matches (like "Chloroquine")
+      if (activeIngredientWords.length === 1) {
+        return combination.includes(activeIngredientWords[0]);
+      }
       
-      const matchCount = activeIngredientWords.filter(word => 
-        combination.includes(word)
-      ).length;
+      // Check for multi-word matches
+      if (activeIngredientWords.length >= 2) {
+        const matchCount = activeIngredientWords.filter(word => 
+          combination.includes(word)
+        ).length;
+        return matchCount >= 2;
+      }
       
-      return matchCount >= 2;
+      return false;
     });
   });
 };

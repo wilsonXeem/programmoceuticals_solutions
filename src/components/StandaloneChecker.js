@@ -205,10 +205,10 @@ const StandaloneChecker = () => {
                     ? `Prohibited FDC combination: ${results.fdcDirective.combination}` 
                     : 'No prohibited FDC combinations found'}
                 </p>
-                <a href="https://www.nafdac.gov.ng/wp-content/uploads/Files/Resources/Guidelines/DRUG_GUIDELINES/Regulatory-Directive-on-Fixed-Dose-Combination-Products.pdf" 
+                <a href="https://nafdac.gov.ng/regulatory-resources/regulatory-directive/" 
                    target="_blank" rel="noopener noreferrer" 
                    style={{ fontSize: '0.8rem', color: '#007bff', textDecoration: 'none' }}>
-                  📄 View Official FDC Directive
+                  📄 View Official Regulatory Directives
                 </a>
               </div>
 
