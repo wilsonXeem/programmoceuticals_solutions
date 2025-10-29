@@ -54,6 +54,19 @@ const StandaloneChecker = () => {
 
   return (
     <div className="container">
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.75rem',
+        marginBottom: '2rem',
+        padding: '1rem',
+        background: '#2c3e50',
+        borderRadius: '8px',
+        color: 'white'
+      }}>
+        <img src="/logo.png" alt="ProgrammoCeuticals Logo" style={{ width: '40px', height: '40px' }} />
+        <h1 style={{ margin: 0, fontSize: '1.5rem' }}>ProgrammoCeuticals</h1>
+      </div>
       <div className="card">
         <h2>🔍 Generic Drug Regulatory Checker</h2>
         <p>Check if your generic drug is affected by NAFDAC regulatory restrictions</p>

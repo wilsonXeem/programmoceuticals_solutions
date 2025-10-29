@@ -59,7 +59,10 @@ function App() {
                         alignItems: "center",
                       }}
                     >
-                      <h1>ProgrammoCeuticals</h1>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <img src="/logo.png" alt="ProgrammoCeuticals Logo" style={{ width: '40px', height: '40px' }} />
+                        <h1>ProgrammoCeuticals</h1>
+                      </div>
                       <div className="nav-links">
                         <NavLink
                           to="/upload"
