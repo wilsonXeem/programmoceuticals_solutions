@@ -127,9 +127,14 @@ const StandaloneChecker = () => {
                 <h4 style={{ margin: '0 0 0.5rem 0', color: results.ceilingList ? '#dc3545' : '#28a745' }}>
                   {results.ceilingList ? '❌' : '✅'} NAFDAC Ceiling List
                 </h4>
-                <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem' }}>
                   {results.ceilingList ? 'Product found on ceiling list - Cannot be registered' : 'Product not on ceiling list'}
                 </p>
+                <a href="https://www.nafdac.gov.ng/wp-content/uploads/Files/Resources/Guidelines/DRUG_GUIDELINES/Ceiling-List-of-Pharmaceutical-Products-for-Registration-in-Nigeria.pdf" 
+                   target="_blank" rel="noopener noreferrer" 
+                   style={{ fontSize: '0.8rem', color: '#007bff', textDecoration: 'none' }}>
+                  📄 View Official Ceiling List
+                </a>
               </div>
 
               <div style={{
@@ -142,9 +147,14 @@ const StandaloneChecker = () => {
                 <h4 style={{ margin: '0 0 0.5rem 0', color: results.importProhibition ? '#dc3545' : '#28a745' }}>
                   {results.importProhibition ? '❌' : '✅'} Import Prohibition List
                 </h4>
-                <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem' }}>
                   {results.importProhibition ? 'Product found on import prohibition list' : 'Product not on import prohibition list'}
                 </p>
+                <a href="https://www.nafdac.gov.ng/wp-content/uploads/Files/Resources/Guidelines/DRUG_GUIDELINES/List-of-Pharmaceutical-Products-Prohibited-from-Importation-into-Nigeria.pdf" 
+                   target="_blank" rel="noopener noreferrer" 
+                   style={{ fontSize: '0.8rem', color: '#007bff', textDecoration: 'none' }}>
+                  📄 View Official Import Prohibition List
+                </a>
               </div>
 
               <div style={{
@@ -157,9 +167,14 @@ const StandaloneChecker = () => {
                 <h4 style={{ margin: '0 0 0.5rem 0', color: results.fivePlusFive ? '#856404' : '#28a745' }}>
                   {results.fivePlusFive ? '⚠️' : '✅'} 5+5 Policy List
                 </h4>
-                <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem' }}>
                   {results.fivePlusFive ? 'Product on 5+5 policy - Local manufacturing only' : 'Product not affected by 5+5 policy'}
                 </p>
+                <a href="https://www.nafdac.gov.ng/wp-content/uploads/Files/Resources/Guidelines/DRUG_GUIDELINES/List-of-Pharmaceutical-Products-for-Local-Manufacturing-Only.pdf" 
+                   target="_blank" rel="noopener noreferrer" 
+                   style={{ fontSize: '0.8rem', color: '#007bff', textDecoration: 'none' }}>
+                  📄 View Official 5+5 Policy List
+                </a>
               </div>
 
               <div style={{
@@ -172,11 +187,16 @@ const StandaloneChecker = () => {
                 <h4 style={{ margin: '0 0 0.5rem 0', color: results.fdcDirective ? '#dc3545' : '#28a745' }}>
                   {results.fdcDirective ? '❌' : '✅'} FDC Regulatory Directive
                 </h4>
-                <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem' }}>
                   {results.fdcDirective 
                     ? `Prohibited FDC combination: ${results.fdcDirective.combination}` 
                     : 'No prohibited FDC combinations found'}
                 </p>
+                <a href="https://www.nafdac.gov.ng/wp-content/uploads/Files/Resources/Guidelines/DRUG_GUIDELINES/Regulatory-Directive-on-Fixed-Dose-Combination-Products.pdf" 
+                   target="_blank" rel="noopener noreferrer" 
+                   style={{ fontSize: '0.8rem', color: '#007bff', textDecoration: 'none' }}>
+                  📄 View Official FDC Directive
+                </a>
               </div>
 
               <div style={{
@@ -189,11 +209,16 @@ const StandaloneChecker = () => {
                 <h4 style={{ margin: '0 0 0.5rem 0', color: results.ntiCheck ? '#17a2b8' : '#28a745' }}>
                   {results.ntiCheck ? '⚠️' : '✅'} Narrow Therapeutic Index
                 </h4>
-                <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem' }}>
                   {results.ntiCheck 
                     ? `BE study required - Found ${results.matchedNTIDrugs.length} NTI match(es): ${results.matchedNTIDrugs.join(', ')}` 
                     : 'No NTI drugs found - Standard BE requirements apply'}
                 </p>
+                <a href="https://www.nafdac.gov.ng/wp-content/uploads/Files/Resources/Guidelines/DRUG_GUIDELINES/Guidelines-for-Bioequivalence-Studies.pdf" 
+                   target="_blank" rel="noopener noreferrer" 
+                   style={{ fontSize: '0.8rem', color: '#007bff', textDecoration: 'none' }}>
+                  📄 View Official BE Guidelines
+                </a>
               </div>
             </div>
           </div>

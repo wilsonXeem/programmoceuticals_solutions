@@ -8,6 +8,7 @@ import { checkCeilingList } from '../utils/nafdacCeilingList';
 import { checkFivePlusFivePolicy } from '../utils/fivePlusFivePolicy';
 import { checkImportProhibitionList } from '../utils/importProhibitionList';
 import { checkFDCRegulatoryDirective } from '../utils/fdcRegulatoryDirective';
+import { hasNarrowTherapeuticIndex, getMatchedNTIDrugs } from '../utils/narrowTherapeuticIndex';
 
 import InlineFilePreview from './InlineFilePreview';
 
@@ -334,8 +335,8 @@ const Screening = () => {
       fivePlusFive: checkFivePlusFivePolicy(genericName, genericName),
       importProhibition: checkImportProhibitionList(genericName, genericName),
       fdcDirective: checkFDCRegulatoryDirective(genericName, [genericName]),
-      ntiCheck: false,
-      matchedNTIDrugs: []
+      ntiCheck: hasNarrowTherapeuticIndex(genericName, [genericName]),
+      matchedNTIDrugs: getMatchedNTIDrugs(genericName, [genericName])
     };
     
     setProductCheckResults(results);
@@ -367,9 +368,14 @@ const Screening = () => {
       handleInternalNote(3, `✅ APPROVED: Generic "${genericName}" not found on FDC regulatory directive prohibition list. Good to proceed.`);
     }
     
-    // Auto-suggest response for question 10 (NTI Check) - NTI list removed
-    handleInternalResponse(10, 'no');
-    handleInternalNote(10, `ℹ️ NTI CHECK DISABLED: Narrow Therapeutic Index list has been removed. Please manually verify if BE study is required based on generic characteristics.`);
+    // Auto-suggest response for question 10 (NTI Check)
+    if (results.ntiCheck) {
+      handleInternalResponse(10, 'yes');
+      handleInternalNote(10, `⚠️ BE STUDY REQUIRED: Generic "${genericName}" found on Narrow Therapeutic Index list. Matched drugs: ${results.matchedNTIDrugs.join(', ')}. Bioequivalence study is mandatory.`);
+    } else {
+      handleInternalResponse(10, 'no');
+      handleInternalNote(10, `✅ STANDARD BE: Generic "${genericName}" not found on NTI list. Standard bioequivalence requirements apply.`);
+    }
   };
 
   const getInternalSummary = () => {
