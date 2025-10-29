@@ -114,8 +114,14 @@ function App() {
                       <Route path="/performance" element={<PerformanceTest />} />
                     </Routes>
                   </main>
-                  <footer className="app-footer">
-                    <p>Built by ProgrammoCeuticals</p>
+                  <footer style={{
+                    background: '#2c3e50',
+                    color: 'white',
+                    textAlign: 'center',
+                    padding: '1rem',
+                    marginTop: 'auto'
+                  }}>
+                    <p style={{ margin: 0 }}>Developed by Wilson Zimthamaha (ProgrammoCeuticals)</p>
                   </footer>
                 </div>
               } />
